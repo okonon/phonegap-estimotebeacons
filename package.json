@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-estimote",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Cordova/PhoneGap plugin for Estimote beacons.",
   "cordova": {
     "id": "cordova-plugin-estimote",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/evothings/phonegap-estimotebeacons.git"
+    "url": "git+https://github.com/inoverse/phonegap-estimotebeacons.git"
   },
   "keywords": [
     "Estimote",
@@ -23,7 +23,7 @@
   "author": "Evothings",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/evothings/phonegap-estimotebeacons/issues"
+    "url": "https://github.com/inoverse/phonegap-estimotebeacons/issues"
   },
-  "homepage": "https://github.com/evothings/phonegap-estimotebeacons#readme"
+  "homepage": "https://github.com/inoverse/phonegap-estimotebeacons#readme"
 }
