@@ -22,6 +22,7 @@ import com.estimote.coresdk.observation.region.Region;
 import com.estimote.coresdk.cloud.model.*;
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
 import com.estimote.coresdk.recognition.packets.Beacon;
+import com.estimote.coresdk.recognition.packets.Nearable;
 import com.estimote.coresdk.service.BeaconManager;
 import com.estimote.mgmtsdk.common.exceptions.EstimoteDeviceException;
 import com.estimote.mgmtsdk.connection.api.BeaconConnection;
@@ -42,6 +43,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.estimote.coresdk.common.config.EstimoteSDK.getAppId;
+import static com.estimote.coresdk.common.config.EstimoteSDK.getAppToken;
 import static com.estimote.coresdk.common.config.EstimoteSDK.getApplicationContext;
 import static com.estimote.coresdk.observation.region.RegionUtils.computeAccuracy;
 import static com.estimote.coresdk.observation.region.RegionUtils.computeProximity;
@@ -302,6 +305,8 @@ public class EstimoteBeacons extends CordovaPlugin
 		}
 	}
 
+	String scanId = "";
+
 	/**
 	 * Start ranging for nearables.
 	 */
@@ -313,6 +318,34 @@ public class EstimoteBeacons extends CordovaPlugin
 		Log.i(LOGTAG, "startRangingNearables");
 //		callbackContext.success("Successful");
 		//mBeaconManager.
+		EstimoteSDK.initialize(cordova.getActivity(), getAppId(), getAppToken());
+		try{
+			mBeaconManager.setNearableListener(new BeaconManager.NearableListener() {
+				@Override
+				public void onNearablesDiscovered(List<Nearable> list) {
+					Log.i(LOGTAG, "nearablesDiscovered");
+					if (list.size() > 0){
+						Log.i(LOGTAG, list.get(0).identifier);
+						try {
+							callbackContext.success(makeJSONNearableArray(list));
+						}catch (JSONException e){
+							Log.e("JSONException", e.getMessage());
+						}
+					}
+				}
+			});
+
+			mBeaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+				@Override
+				public void onServiceReady() {
+					mBeaconManager.startNearableDiscovery();
+				}
+			});
+		}
+		catch (Exception e){
+			Log.e(LOGTAG, "startRangingNearables error:", e);
+			callbackContext.error("Start rangingNearables RemoteException");
+		}
 	}
 
 	/**
@@ -321,14 +354,14 @@ public class EstimoteBeacons extends CordovaPlugin
 	private void startRanging(BeaconRegion region, CallbackContext callbackContext)
 	{
 		//TODO: Implement ranging exception block
-		//try {
+		try {
 			Log.i(LOGTAG, "startRanging");
 			mBeaconManager.startRanging(region);
-		//}
-		//catch(android.os.RemoteException e) {
-		//	Log.e(LOGTAG, "startRanging error:", e);
-		//	callbackContext.error("Start ranging RemoteException");
-		//}
+		}
+		catch(Exception e) {
+			Log.e(LOGTAG, "startRanging error:", e);
+			callbackContext.error("Start ranging RemoteException");
+		}
 	}
 
 	/**
@@ -512,8 +545,7 @@ public class EstimoteBeacons extends CordovaPlugin
 
 			String appID = cordovaArgs.getString(0);
 			String appToken = cordovaArgs.getString(1);
-			mEstimoteSDK.initialize(cordova.getActivity(), appID, appToken);
-
+			EstimoteSDK.initialize(cordova.getActivity(), appID, appToken);
 			PluginResult r = new PluginResult(PluginResult.Status.OK);
 			callbackContext.sendPluginResult(r);
 		} else {
@@ -865,6 +897,27 @@ public class EstimoteBeacons extends CordovaPlugin
 			});
 
 		}
+		return jsonArray;
+	}
+
+	private JSONArray makeJSONNearableArray(List<Nearable> nearables)
+		throws JSONException{
+		final JSONArray jsonArray = new JSONArray();
+
+
+		for (final Nearable nearable : nearables){
+			try{
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("color", nearable.color.text);
+				jsonObject.put("identifier", nearable.identifier);
+				jsonObject.put("type", nearable.type.text);
+				jsonObject.put("firmware", nearable.firmwareVersion);
+				jsonArray.put(jsonObject);
+			} catch (JSONException e){
+				Log.e("JSONException", e.getMessage());
+			}
+		}
+
 		return jsonArray;
 	}
 
