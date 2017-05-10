@@ -856,54 +856,108 @@ estimote.beacons.stopSecureMonitoringForRegion = function (region, success, erro
 };
 
 /**
- * Connect to Estimote Beacon. Available on Android.
+ * Start discovering devices. Available on Android.
  *
- * @param {Beacon} beacon Beacon to connect to.
+ * @param {function} success Function called when devices are discovered,
+ * takes a {@link DeviceInfo} object as parameter (mandatory).
+ * @param {ErrorCallback} error Function called on error (mandatory).
+ *
+ * @example callback format:
+ *   success(DeviceInfo)
+ *
+ * @example Example that prints all devices and type:
+ *   estimote.beacons.startDiscoveringDevices(
+ *     function(deviceInfo) {
+ *       console.log('Devices discovered:')
+ *       estimote.printObject(deviceInfo) },
+ *     function(errorMessage) {
+ *       console.log('Discovering devices error: ' + errorMessage) })
+ */
+estimote.beacons.startDiscoveringDevices = function(success, error)
+{
+	if (!checkExecParamsSuccessError(success, error)) {
+		return false;
+	}
+
+	exec(success,
+		error,
+		'EstimoteBeacons',
+		'beacons_startDiscoveringDevices'
+	);
+
+	return true;
+};
+
+/**
+ * Stop discovering devices. Available on Android.
+ *
+ * @param {ErrorCallbackNoParams} [success] Function called when discovering
+ * is stopped (optional).
+ * @param {ErrorCallback} [error] Function called on error (optional).
+ *
+ * @example Example that stops discovering:
+ *   estimote.beacons.stopDiscoveringDevices()
+ */
+estimote.beacons.stopDiscoveringDevices = function(success, error)
+{
+	exec(success,
+		error,
+		'EstimoteBeacons',
+		'beacons_stopDiscoveringDevices'
+	);
+
+	return true;
+};
+
+/**
+ * Connect to Estimote Device. Available on Android.
+ *
+ * @param {ConfiurableDevce} device Device to connect to.
  * @param {ErrorCallbackNoParams} [success] Function called when monitoring
  * is stopped (optional).
  * @param {ErrorCallback} [error] Function called on error (optional).
  *
  * @example Example that connects with MAC address:
- *   estimote.beacons.connectToBeacon(FF:0F:F0:00:F0:00);
+ *   estimote.beacons.connectToDevice(FF:0F:F0:00:F0:00);
  * @example Example that connects with BeaconRegion:
- *   estimote.beacons.connectToBeacon({
+ *   estimote.beacons.connectToDevice({
  *     proximityUUID: '000000FF-F00F-0FF0-F000-000FF0F00000',
  *     major: 1,
  *     minor: 1
  *   });
  */
-estimote.beacons.connectToBeacon = function (beacon, success, error)
+estimote.beacons.connectToDevice = function (device, success, error)
 {
-  if (typeof beacon !== 'object') {
+  if (typeof device !== 'object') {
     return false;
   }
 
   exec(success,
     error,
     'EstimoteBeacons',
-    'beacons_connectToBeacon',
-    [beacon]
+    'beacons_connectToDevice',
+    [device]
   );
 
 	return true;
 };
 
 /**
- * Disconnect from connected Estimote Beacon. Available on Android.
+ * Disconnect from connected Estimote Device. Available on Android.
  *
- * @param {ErrorCallbackNoParams} [success] Function called when beacon
+ * @param {ErrorCallbackNoParams} [success] Function called when device
  * disconnection request has been init'ed.
  * @param {ErrorCallback} [error] Function called on error (optional).
  *
- * @example Example that disconnects from beacon:
- *   estimote.beacons.disconnectConnectedBeacon();
+ * @example Example that disconnects from device:
+ *   estimote.beacons.disconnectFromDevice();
  */
-estimote.beacons.disconnectConnectedBeacon = function (success, error)
+estimote.beacons.disconnectFromDevice = function (success, error)
 {
   exec(success,
     error,
     'EstimoteBeacons',
-    'beacons_disconnectConnectedBeacon',
+    'beacons_disconnectFromDevice',
     []
   );
 

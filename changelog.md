@@ -1,12 +1,10 @@
 # Change Log
 
-## Version 0.8.1 (Apr 5, 2017)
+## Version 1.0.0 (May 10, 2017)
 
 Android updates:
 
-* Update of Estimote Android SDK to version 1.0.0 (com.estimote:sdk:1.0.0:release@aar)
-* Added support for JS API method estimote.nearables.startRangingForType
-* Updated Java methods and variables to support the latest SDK.
+* Update of Estimote Android SDK to version 1.0.3
 
 ## Version 0.8.0 (Jul 25, 2015)
 

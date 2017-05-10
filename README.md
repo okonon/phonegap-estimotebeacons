@@ -1,8 +1,21 @@
-## New Maintainer
+## What's new?
 
-Version 0.8.2 contains the latest version of Estimote SDK for iOS and Android. This version also includes support for Nearables on Android, currently we are only supporting the startRanging method however we should have additional nearable methods available in the coming days. We are working through the existing issues on the repo, and will begin resolving them in the coming days. Please make sure to helpout with pull requests as much as possible.
+The Android part of the plugin was updated:
 
-Thanks, Linuxs
+VERSION 1.0.1:
+    - Ranging OK,
+    - SecureRanging OK using a BeaconRegion (and not a SecureBeaconRegion),
+    - Monitoring NOT TESTED,
+    - Discovery NOT WORKING,
+    - Connection NOT WORKING (because of no connectivity packets).
+
+VERSION 1.0.2 & 1.0.3:
+    - Ranging NOT WORKING,
+    - Monitoring NOT TESTED,
+    - Discovery OK,
+    - Connection OK.
+
+See https://github.com/Estimote/Android-SDK/issues/211.
 
 ## About the Estimote Cordova/PhoneGap plugin
 
