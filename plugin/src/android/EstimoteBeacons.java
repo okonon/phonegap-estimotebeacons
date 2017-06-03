@@ -539,7 +539,7 @@ public class EstimoteBeacons extends CordovaPlugin
 			throws JSONException
 	{
 		Log.i(LOGTAG, "setupAppIDAndAppToken");
-
+		
 		if (mEstimoteSDK == null) {
 			mEstimoteSDK = new EstimoteSDK();
 
@@ -817,6 +817,9 @@ public class EstimoteBeacons extends CordovaPlugin
 		JSONObject json = new JSONObject();
 		json.put("region", makeJSONRegion(region));
 		json.put("beacons", makeJSONBeaconArray(beacons));
+        Log.i(LOGTAG, "*** in makeJSONBeaconInfo region - " + region);
+        Log.i(LOGTAG, "*** in makeJSONBeaconInfo beacons - " + beacons);
+        Log.i(LOGTAG, "*** in makeJSONBeaconInfo json - " + json);
 		return json;
 	}
 
@@ -855,6 +858,7 @@ public class EstimoteBeacons extends CordovaPlugin
 		final JSONArray jsonArray = new JSONArray();
 		for (final Beacon b : beacons) {
 			// Compute proximity value.
+            //Log.i(LOGTAG, "*** makeJSONBeaconArray For loop - " + b);
 			Proximity proximityValue = computeProximity(b);
 			int proximity = 0; // Unknown.
 			if (Proximity.IMMEDIATE == proximityValue) { proximity = 1; }
@@ -867,34 +871,35 @@ public class EstimoteBeacons extends CordovaPlugin
 			// Normalize UUID.
 
 			String uuid = (b.getProximityUUID().toString());
-			EstimoteCloud estimoteCloud = EstimoteCloud.getInstance();
-			estimoteCloud.fetchBeaconDetails(b.getMacAddress(), new CloudCallback<BeaconInfo>() {
-				@Override
-				public void success(BeaconInfo beaconInfo) {
-					// Construct JSON object for beacon.
+//			EstimoteCloud estimoteCloud = EstimoteCloud.getInstance();
+//			estimoteCloud.fetchBeaconDetails(b.getMacAddress(), new CloudCallback<BeaconInfo>() {
+//				@Override
+//				public void success(BeaconInfo beaconInfo) {
+//					// Construct JSON object for beacon.
+//                    Log.i(LOGTAG, "*** fetchBeaconDetails - " + b.getMacAddress());
 					try {
 						JSONObject json = new JSONObject();
-						json.put("major", beaconInfo.major);
-						json.put("minor", beaconInfo.minor);
+						json.put("major", b.getMajor()); //beaconInfo.major);
+						json.put("minor", b.getMinor()); //beaconInfo.minor);
 						json.put("rssi", b.getRssi());
-						json.put("measuredPower", beaconInfo.settings.broadcastingPower.powerInDbm);
-						json.put("proximityUUID", beaconInfo.uuid);
+						//json.put("measuredPower", beaconInfo.settings.broadcastingPower.powerInDbm);
+						json.put("proximityUUID", b.getProximityUUID()); //beaconInfo.uuid);
 						json.put("proximity", proximity_);
 						json.put("distance", distance);
-						json.put("name", beaconInfo.name);
-						json.put("macAddress", beaconInfo.macAddress);
+						//json.put("name", beaconInfo.name);
+						//json.put("macAddress", beaconInfo.macAddress);
 						jsonArray.put(json);
 					}
 					catch (JSONException e){
 						Log.e("JSONException", e.getMessage());
 					}
-				}
-
-				@Override
-				public void failure(EstimoteCloudException e) {
-
-				}
-			});
+//				}
+//
+//				@Override
+//				public void failure(EstimoteCloudException e) {
+//                    Log.i(LOGTAG, "*(******** EstimoteCloudException: " + e);
+//				}
+//			});
 
 		}
 		return jsonArray;
@@ -999,7 +1004,7 @@ public class EstimoteBeacons extends CordovaPlugin
 		@Override
 		public void onBeaconsDiscovered(BeaconRegion region, List<Beacon> beacons) {
 			Log.i(LOGTAG, "onBeaconsDiscovered");
-
+			
 			try {
 				// store in plugin
 				mRangedBeacons.clear();
@@ -1017,7 +1022,7 @@ public class EstimoteBeacons extends CordovaPlugin
 
 				// Create JSON beacon info object.
 				JSONObject json = makeJSONBeaconInfo(region, beacons);
-
+				
 				// Send result to JavaScript.
 				PluginResult r = new PluginResult(PluginResult.Status.OK, json);
 				r.setKeepCallback(true);
