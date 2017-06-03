@@ -804,7 +804,7 @@
 	[aManager startMonitoringForRegion:region];
 
 	// This will get the initial state faster.
-	[aManager requestStateForRegion:region];
+	//[aManager requestStateForRegion:region];
 }
 
 /**
