@@ -790,8 +790,7 @@
 	CLBeaconRegion* region = [self createRegionFromDictionary:regionDictionary];
 
 	// Set region notification when display is activated.
-	NSLog(@"******* argumentAtIndex 1: %@", [command argumentAtIndex:1] );
-	region.notifyEntryStateOnDisplay = false;//(BOOL)[command argumentAtIndex:1];
+	region.notifyEntryStateOnDisplay = [[command argumentAtIndex:1] boolValue];
 
 	// Stop any ongoing monitoring for the given region.
 	[self helper_stopMonitoringForRegion:region manager:aManager];
